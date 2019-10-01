@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "resolveJsonModule": true,
     "target": "es5",
     "module": "esnext",
     "strict": true,
@@ -9,6 +10,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
+    "noImplicitAny": false,
     "baseUrl": ".",
     "types": [
       "webpack-env"
