@@ -34,7 +34,7 @@ export default Vue.extend({
 		];
 
 		let error = 0;
-		for (let i = 0; i < 10000; i++) {
+		for (let i = 0; i < 1000; i++) {
 			_.each(XOR, example => {
 				network.activate(example.input);
 				let memory = new Memory();
@@ -51,18 +51,14 @@ export default Vue.extend({
 					neuron.adjust(memory);
 				});
 			});
-			if (i % 1000 == 0) {
-				console.log("updating");
+			if (i % 100 == 0) {
+				_.each(XOR, example => {
+					const result = network.activate(example.input);
+					console.log("XOR on iteration", i, ':', example.input, example.output[0], result);
+				});
 				this.genome = network.getGenome();
 			}
 		}
-
-		_.each(XOR, example => {
-			const result = network.activate(example.input);
-			console.log("XOR", example.input, example.output[0], result);
-    });
-    
-    console.log('testing random XOR 1, 0', network.activate([1, 0]));
 
 		this.genome = network.getGenome();
 	},

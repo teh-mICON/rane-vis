@@ -65,7 +65,7 @@ export default Vue.extend({
 		});
 		console.log("BEFORE", { output, result, error });
 
-		for (let i = 0; i < 10000; i++) {
+		for (let i = 0; i < 1; i++) {
 			let memory = new Memory();
 			_.each(output, (value, index) => {
 				const neuron = network.getOutputNeurons()[index];
