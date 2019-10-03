@@ -7,6 +7,9 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "json-beautify": "^1.1.1",
+    "json-format-highlight": "^1.0.1",
+    "json-prettify": "^1.2.0",
     "vis-network": "^6.0.0",
     "vue": "^2.6.10"
   },

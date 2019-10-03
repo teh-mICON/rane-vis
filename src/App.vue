@@ -2,52 +2,69 @@
 	<div id="app">
 		<div class="field">
 			<div class="visualization" ref="vis"></div>
+      <pre v-html="hbgenome"/>
 		</div>
 	</div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import * as _ from "lodash";
 import * as vis from "vis-network";
+
+import jb from 'json-beautify'
+import * as jfh from 'json-format-highlight';
+import * as _ from 'lodash'
 
 export default Vue.extend({
 	name: "app",
 
 	created() {
 		this.graph();
-	},
+  },
+  data() {
+    return { genome: null as any }
+  },
+  computed: {
+    hbgenome() {
+      const self = this as any;
+      if(self.genome === null) {
+        return '';
+      }
+      console.log(self.genome)
+      console.log(jb)
+      return jfh(jb(self.genome, null as any, 2, 100));
+      return '';
+    }
+  },
 	methods: {
-		denormalize(low, high, value) {
-			return +low + value * (high - low);
-		},
 		async graph() {
 			const data = await import("../data.json");
-			const genome = data.genome;
-			const neurons = [] as any;
+			const genome = this.genome = data.genome;
 
-			const nodesRaw = genome.neurons.map((neuron, i) => {
+			const nodesRaw = genome.nodes.map((neuron, i) => {
 				let color;
-				if (neuron.type == "input") color = "#1c7bbb";
-				if (neuron.type == "hidden") color = "#bb4e1c";
-				if (neuron.type == "output") color = "#1cbb3d";
+				if (neuron.type == "input") color = "#dbdd60";
+				if (neuron.type == "hidden") color = "#92b6ce";
+				if (neuron.type == "output") color = "#fff";
 
 				return {
-					id: neuron.id,
-					title: neuron.id,
-					label: neuron.id,
+					id: ""+neuron.id,
+					title: ""+neuron.id,
+					label: ""+neuron.id,
 					color
 				};
 			}) as any;
-			const nodes = new vis.DataSet(nodesRaw) as any;
-
-			const edgesRaw = genome.connections.map(connection => {
+      const nodes = new vis.DataSet(nodesRaw) as any;
+      
+      const filteredConnections = _.filter(genome.connections, (connection) => connection.enabled)
+			const edgesRaw = filteredConnections.map(connection => {
 				return {
 					from: connection.from,
-					to: connection.to,
-					color: "#fff",
-          width: this.denormalize(0, 5, connection.weight),
-          arrows: 'to'
+          to: connection.to,
+          //TODO: squash/normalize
+          width: connection.weight,
+          arrows: 'to',
+          color: connection.weight > 0 ? 'green' : 'red'
 				};
 			}) as any;
 			const edges = new vis.DataSet(edgesRaw) as any;
@@ -90,6 +107,9 @@ body {
 	font-family: "Avenir", Helvetica, Arial, sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	text-align: center;
+  color: #fff;
+}
+#asd {
+  color: #92b6ce;
 }
 </style>
