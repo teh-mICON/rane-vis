@@ -60,7 +60,9 @@ export default Vue.extend({
 		_.each(XOR, example => {
 			const result = network.activate(example.input);
 			console.log("XOR", example.input, example.output[0], result);
-		});
+    });
+    
+    console.log('testing random XOR 1, 0', network.activate([1, 0]));
 
 		this.genome = network.getGenome();
 	},
