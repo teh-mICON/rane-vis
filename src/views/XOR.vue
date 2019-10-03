@@ -4,13 +4,13 @@
 
 <script lang="ts">
 import Vue from "vue";
-import Graph from "./components/graph.vue";
-import utils from "./utils";
+import Graph from "../components/graph.vue";
+import utils from "../utils";
 
 import _ from "lodash";
 
-import Network from "../../rane/src/Network";
-import Memory from "../../rane/src/Memory";
+import Network from "../../../rane/src/Network";
+import Memory from "../../../rane/src/Memory";
 
 export default Vue.extend({
 	name: "app",
