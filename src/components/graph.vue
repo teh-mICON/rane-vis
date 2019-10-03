@@ -15,6 +15,14 @@ import * as _ from "lodash";
 
 import utils from "../utils";
 
+  function normalize(low, high, value) {
+    return (value - low) / (high - low)
+  }
+  function denormalize(low, high, value) {
+    return +low + (value * (high - low))
+  }
+
+
 export default Vue.extend({
 	name: "vis",
 
@@ -48,13 +56,17 @@ export default Vue.extend({
 			const filteredConnections = _.filter(
 				genome.connections,
 				connection => connection.enabled
-			);
+      );
+
+      const max = _.maxBy(filteredConnections, (connection) => connection.weight).weight;
+      const min = _.minBy(filteredConnections, (connection) => connection.weight).weight;
 			const edgesRaw = filteredConnections.map(connection => {
+        const normalized = normalize(min, max, connection.weight);
+        const width = denormalize(1, 10, normalized);
 				return {
 					from: connection.from,
 					to: connection.to,
-					//TODO: squash/normalize
-					width: connection.weight,
+					width,
 					arrows: "to",
 					color: connection.weight > 0 ? "green" : "red"
 				};
