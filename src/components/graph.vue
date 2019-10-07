@@ -1,16 +1,10 @@
 <template>
-	<div>
 		<div ref="graph"></div>
-		<pre v-html="json" />
-	</div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import * as vis from "vis-network";
-
-import beautify from "json-beautify";
-import * as format from "json-format-highlight";
 import * as _ from "lodash";
 
 import utils from "../utils";
@@ -32,8 +26,7 @@ export default Vue.extend({
 	},
 
 	mounted() {
-		this.json = format(beautify(this.genome, null as any, 2, 100));
-		this.graph(this.$refs["graph"], this.genome);
+    this.graph(this.$refs["graph"], this.genome);
 	},
 
 	methods: {
@@ -58,8 +51,8 @@ export default Vue.extend({
 				connection => connection.enabled
       );
 
-      const max = _.maxBy(filteredConnections, (connection) => connection.weight).weight;
-      const min = _.minBy(filteredConnections, (connection) => connection.weight).weight;
+      const max = _.maxBy(filteredConnections, (connection) => Math.abs(connection.weight)).weight;
+      const min = _.minBy(filteredConnections, (connection) => Math.abs(connection.weight)).weight;
 			const edgesRaw = filteredConnections.map(connection => {
         const normalized = normalize(min, max, connection.weight);
         const width = denormalize(1, 10, normalized);

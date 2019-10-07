@@ -1,10 +1,14 @@
 <template>
-	<Graph :genome="genome" v-if="genome" />
+	<div>
+		<Graph :genome="genome" v-if="genome" />
+		<Genome :genome="genome" v-if="genome" />
+	</div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import Graph from "../components/graph.vue";
+import GraphComponent from "../components/graph.vue";
+import GenomeComponent from "../components/genome.vue";
 import utils from "../utils";
 
 import _ from "lodash";
@@ -19,13 +23,16 @@ export default Vue.extend({
 	name: "app",
 
 	components: {
-		Graph
+		Graph: GraphComponent,
+		Genome: GenomeComponent
 	},
 
 	data() {
 		return { genome: null as any };
 	},
 	async created() {
+		document.title = "mazur";
+
 		const genome = new Genome();
 
 		genome.addNodeGene(0, NEURON_TYPE.input, 0, "sigmoid", true);
@@ -49,7 +56,7 @@ export default Vue.extend({
 		genome.addConnectionGene(3, 5, 0.55, innovation++, true); // w8
 
 		let network = new Network(
-			{ input: 2, output: 1, learningRate: 0.1 },
+			{ input: 2, output: 1, learningRate: 0.5 },
 			genome
 		);
 
@@ -65,19 +72,7 @@ export default Vue.extend({
 		});
 		console.log("BEFORE", { output, result, error });
 
-		for (let i = 0; i < 1; i++) {
-			let memory = new Memory();
-			_.each(output, (value, index) => {
-				const neuron = network.getOutputNeurons()[index];
-				const derivativeErrorOutput = -(output[index] - neuron.getActivation());
-				neuron.propagate(derivativeErrorOutput, memory);
-			});
-
-			memory = new Memory();
-			_.each(network.getOutputNeurons(), neuron => {
-				neuron.adjust(memory);
-			});
-		}
+    network.train({input, output});
 
 		result = network.activate(input);
 		error = 0;
