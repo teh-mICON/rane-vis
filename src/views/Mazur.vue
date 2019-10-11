@@ -56,7 +56,7 @@ export default Vue.extend({
 		genome.addConnectionGene(3, 5, 0.55, innovation++, true); // w8
 
 		let network = new Network(
-			{ input: 2, output: 1, learningRate: 0.5 },
+			{ input: 2, output: 2, learningRate: 0.5 },
 			genome
 		);
 

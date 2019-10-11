@@ -2,9 +2,8 @@
 	<div>
 		<Graph :genome="genome" v-if="genome" />
 		<table id="result">
-			<tr v-for="example in examples" :key="example.id">
-				<td class="input">{{example.input[0]}}</td>
-				<td class="input">{{example.input[1]}}</td>
+			<tr v-for="(example, index) in examples" :key="example.id">
+				<td class="input">{{index}}</td>
 				<td class="output">{{example.output}}</td>
 				<td class="result">{{example.result}}</td>
 			</tr>
@@ -36,33 +35,37 @@ export default Vue.extend({
 		return { genome: null as any, examples: null as any };
 	},
 	async created() {
-		document.title = "XOR";
-    this.genome = utils.createPerceptronGenome("XORinho", 2, 10, 1);
-    
-    const network = new Network({learningRate: .5}, this.genome);
+		document.title = "rane 0-3";
+		this.genome = utils.createPerceptronGenome("XORinho", 3, 3, 3);
 
-		const XOR = [
-			{ input: [0, 0], output: [0] },
-			{ input: [0, 1], output: [1] },
-			{ input: [1, 0], output: [1] },
-			{ input: [1, 1], output: [0] },
+		const network = new Network({ learningRate: 0.01 }, this.genome);
+
+		const data = [
+			{ input: [0, 0, 0], output: [0, 0, 0] },
+			{ input: [1, 0, 0], output: [1, 0, 0] },
+			{ input: [0, 1, 0], output: [0, 1, 0] },
+			{ input: [0, 0, 1], output: [0, 0, 1] },
+			/*{ input: [0, 0, 0], output: [0, 0, 0] },
+			{ input: [0, 0, 1], output: [0, 0, 1] },
+			{ input: [0, 1, 0], output: [0, 1, 0] },
+			{ input: [1, 0, 0], output: [1, 0, 0] },*/
 		];
 
 		let error = 0;
-		for (let i = 0; i < 1; i++) {
+		for (let i = 0; i < 250; i++) {
 			this.examples = [] as any;
-			_.each(XOR, example => {
-        network.train(example);
+
+			_.each(data, example => {
+				network.train(example);
 			});
 		}
-    this.genome = network.getGenome();
-		_.each(XOR, example => {
+		_.each(data, (example, index) => {
 			const result = network.activate(example.input);
-      this.examples.push({
-        input: example.input,
-        output: example.output[0],
-        result: result[0]
-      });
+			this.examples.push({
+				input: example.input,
+				output: index,
+				result: _.map(result, output => output.toFixed(3))
+			});
 		});
 		this.genome = network.getGenome();
 	},

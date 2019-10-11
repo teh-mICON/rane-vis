@@ -21,14 +21,14 @@ function createPerceptronGenome(...args: any) {
   let prevLayer = [] as any;
   for(let i = 0; i < input; i++) {
     prevLayer.push(id);
-    genome.addNodeGene(id++, NEURON_TYPE.input, 0, 'sigmoid', true);
+    genome.addNodeGene(id++, NEURON_TYPE.input, 0, 'relu', true);
   }
 
   _.each(hidden, layer => {
     const currentLayer = [] as any;
     for(let i = 0; i < layer; i++) {
       currentLayer.push(id)
-      genome.addNodeGene(id++, NEURON_TYPE.hidden, random() * 2 - 1, 'sigmoid', true);
+      genome.addNodeGene(id++, NEURON_TYPE.hidden, random() * 2 - 1, 'relu', true);
     }
     _.each(currentLayer, currentLayerId => {
       _.each(prevLayer, prevLayerId => {
@@ -41,7 +41,7 @@ function createPerceptronGenome(...args: any) {
   const currentLayer = [] as any;
   for(let i = 0; i < output; i++) {
     currentLayer.push(id)
-    genome.addNodeGene(id++, NEURON_TYPE.output, random() * 2 - 1, 'sigmoid', true);
+    genome.addNodeGene(id++, NEURON_TYPE.output, random() * 2 - 1, 'relu', true);
   }
   _.each(currentLayer, currentLayerId => {
     _.each(prevLayer, prevLayerId => {
