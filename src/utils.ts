@@ -2,8 +2,8 @@ import * as vis from "vis-network";
 import * as _ from 'lodash';
 
 import Genome from '../../rane/src/Genome'
-import Neuron from '../../rane/src/Neuron'
-import { NEURON_TYPE } from '../../rane/src/Neuron'
+import Node from '../../rane/src/Node'
+import { NODE_TYPE } from '../../rane/src/Node'
 import seedrandom from 'seedrandom';
 
 function createPerceptronGenome(...args: any) {
@@ -21,14 +21,14 @@ function createPerceptronGenome(...args: any) {
   let prevLayer = [] as any;
   for(let i = 0; i < input; i++) {
     prevLayer.push(id);
-    genome.addNodeGene(id++, NEURON_TYPE.input, 0, 'relu', true);
+    genome.addNodeGene(id++, NODE_TYPE.input, 0, 'relu', true);
   }
 
   _.each(hidden, layer => {
     const currentLayer = [] as any;
     for(let i = 0; i < layer; i++) {
       currentLayer.push(id)
-      genome.addNodeGene(id++, NEURON_TYPE.hidden, random() * 2 - 1, 'relu', true);
+      genome.addNodeGene(id++, NODE_TYPE.hidden, random() * 2 - 1, 'relu', true);
     }
     _.each(currentLayer, currentLayerId => {
       _.each(prevLayer, prevLayerId => {
@@ -41,7 +41,7 @@ function createPerceptronGenome(...args: any) {
   const currentLayer = [] as any;
   for(let i = 0; i < output; i++) {
     currentLayer.push(id)
-    genome.addNodeGene(id++, NEURON_TYPE.output, random() * 2 - 1, 'relu', true);
+    genome.addNodeGene(id++, NODE_TYPE.output, 1, 'sigmoid', true);
   }
   _.each(currentLayer, currentLayerId => {
     _.each(prevLayer, prevLayerId => {
@@ -53,5 +53,49 @@ function createPerceptronGenome(...args: any) {
 }
 
 export default {
-  createPerceptronGenome
+  createPerceptronGenome,
+  examples: {
+    mirror: [
+      { input: [0, 0, 0], output: [0, 0, 0] },
+      { input: [1, 0, 0], output: [1, 0, 0] },
+      { input: [0, 1, 0], output: [0, 1, 0] },
+      { input: [0, 0, 1], output: [0, 0, 1] }
+    ],
+    AND: [
+      { input: [0, 0], output: [0] },
+      { input: [0, 1], output: [0] },
+      { input: [1, 0], output: [0] },
+      { input: [1, 1], output: [1] },
+    ],
+    OR: [
+      { input: [0, 0], output: [0] },
+      { input: [0, 1], output: [1] },
+      { input: [1, 0], output: [1] },
+      { input: [1, 1], output: [1] },
+    ],
+    XOR: [
+      { input: [0, 0], output: [0] },
+      { input: [0, 1], output: [1] },
+      { input: [1, 0], output: [1] },
+      { input: [1, 1], output: [0] }
+    ],
+    NAND: [
+      { input: [0, 0], output: [1] },
+      { input: [0, 1], output: [1] },
+      { input: [1, 0], output: [1] },
+      { input: [1, 1], output: [0] },
+    ],
+    NOR: [
+      { input: [0, 0], output: [1] },
+      { input: [0, 1], output: [0] },
+      { input: [1, 0], output: [0] },
+      { input: [1, 1], output: [0] },
+    ],
+    XNOR: [
+      { input: [0, 0], output: [1] },
+      { input: [0, 1], output: [0] },
+      { input: [1, 0], output: [0] },
+      { input: [1, 1], output: [1] },
+    ]    
+  }
 }

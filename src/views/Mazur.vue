@@ -14,7 +14,7 @@ import utils from "../utils";
 import _ from "lodash";
 
 import Network from "../../../rane/src/Network";
-import { NEURON_TYPE } from "../../../rane/src/Neuron";
+import { NODE_TYPE } from "../../../rane/src/Node";
 import Genome from "../../../rane/src/Genome";
 import Memory from "../../../rane/src/Memory";
 
@@ -35,12 +35,12 @@ export default Vue.extend({
 
 		const genome = new Genome();
 
-		genome.addNodeGene(0, NEURON_TYPE.input, 0, "sigmoid", true);
-		genome.addNodeGene(1, NEURON_TYPE.input, 0, "sigmoid", true);
-		genome.addNodeGene(2, NEURON_TYPE.hidden, 0.35, "sigmoid", true);
-		genome.addNodeGene(3, NEURON_TYPE.hidden, 0.35, "sigmoid", true);
-		genome.addNodeGene(4, NEURON_TYPE.output, 0.6, "sigmoid", true);
-		genome.addNodeGene(5, NEURON_TYPE.output, 0.6, "sigmoid", true);
+		genome.addNodeGene(0, NODE_TYPE.input, 0, "sigmoid", true);
+		genome.addNodeGene(1, NODE_TYPE.input, 0, "sigmoid", true);
+		genome.addNodeGene(2, NODE_TYPE.hidden, 0.35, "sigmoid", true);
+		genome.addNodeGene(3, NODE_TYPE.hidden, 0.35, "sigmoid", true);
+		genome.addNodeGene(4, NODE_TYPE.output, 0.6, "sigmoid", true);
+		genome.addNodeGene(5, NODE_TYPE.output, 0.6, "sigmoid", true);
 
 		let innovation = 1;
 		genome.addConnectionGene(0, 2, 0.15, innovation++, true); // w1

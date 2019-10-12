@@ -7,12 +7,16 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "bootswatch": "^4.3.1",
     "hex2dec": "^1.1.2",
     "json-beautify": "^1.1.1",
     "json-format-highlight": "^1.0.1",
     "json-prettify": "^1.2.0",
     "mnist": "^1.1.0",
     "seedrandom": "^3.0.5",
+    "typeface-montserrat": "0.0.75",
+    "typeface-roboto": "0.0.75",
+    "typeface-source-sans-pro": "0.0.75",
     "vis-network": "^6.0.0",
     "vue": "^2.6.10"
   },

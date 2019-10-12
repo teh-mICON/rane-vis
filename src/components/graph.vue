@@ -1,11 +1,17 @@
 <template>
-	<div ref="graph"></div>
+	<div>
+		<div ref="graph"></div>
+		<pre v-html="clickedNode" class="json_small"></pre>
+		<pre v-html="clickedEdge" class="json_small"></pre>
+	</div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import * as vis from "vis-network";
 import * as _ from "lodash";
+import beautify from "json-beautify";
+import * as format from "json-format-highlight";
 import Converter from "hex2dec";
 
 import utils from "../utils";
@@ -22,45 +28,39 @@ export default Vue.extend({
 
 	props: ["genome"],
 	data() {
-		return { json: "" };
+		return { clickedEdge: null, clickedNode: null };
 	},
 
 	mounted() {
-		this.graph(this.$refs["graph"], this.genome);
+		this.graph(this.$refs["graph"], this.genome, this);
 	},
 
 	methods: {
-		graph: async (element, genome) => {
-			const nodesRaw = genome.nodes.map((neuron, i) => {
+		graph: async (element, genome, vue) => {
+			const nodesRaw = genome.nodes.map((node, i) => {
 				let color;
-				if (neuron.type == "input") color = "#dbdd60";
-				if (neuron.type == "hidden") color = "#92b6ce";
-				if (neuron.type == "output") color = "#fff";
+				if (node.type == "input") color = "#dbdd60";
+				if (node.type == "hidden") color = "#92b6ce";
+				if (node.type == "output") color = "#fff";
 
-				const dec = Math.floor(denormalize(0, 255, neuron.activation));
+				const dec = Math.floor(denormalize(0, 255, node.activation));
 				const hex = Converter.decToHex("" + dec, { prefix: false });
 				color = "#" + hex + hex + hex;
 
 				return {
-					id: "" + neuron.id,
-					title: "" + neuron.id,
-					label: "" + neuron.id,
-					color
+					id: "" + node.id,
+					title: "" + node.id,
+					label: "" + node.id,
+					color,
+					custom: { node }
 				};
 			}) as any;
 			const nodes = new vis.DataSet(nodesRaw) as any;
 
-			const filteredConnections = _.filter(
-				genome.connections,
-				connection => connection.enabled
-			);
+			const filteredConnections = _.filter(genome.connections, connection => connection.enabled);
 
-			const max = _.maxBy(filteredConnections, connection =>
-				Math.abs(connection.weight)
-			).weight;
-			const min = _.minBy(filteredConnections, connection =>
-				Math.abs(connection.weight)
-			).weight;
+			const max = _.maxBy(filteredConnections, connection => connection.weight).weight;
+      const min = _.minBy(filteredConnections, connection => connection.weight).weight;
 			const edgesRaw = filteredConnections.map(connection => {
 				const normalized = normalize(min, max, connection.weight);
 				const width = denormalize(1, 10, normalized);
@@ -69,12 +69,11 @@ export default Vue.extend({
 					to: connection.to,
 					width,
 					arrows: "to",
-					color: connection.weight > 0 ? "green" : "red"
+					color: connection.weight > 0 ? "green" : "red",
+					custom: { connection }
 				};
 			}) as any;
-			const edges = new vis.DataSet(
-				_.remove(edgesRaw, edge => edge !== null)
-			) as any;
+			const edges = new vis.DataSet(_.remove(edgesRaw, edge => edge !== null)) as any;
 
 			const options = {
 				autoResize: true,
@@ -95,11 +94,35 @@ export default Vue.extend({
 				physics: false
 			} as any;
 
-			new vis.Network(element, { nodes, edges }, options);
+			const network = new vis.Network(element, { nodes, edges }, options);
+
+			network.on("click", properties => {
+				const nodeIds = properties.nodes;
+				const node = nodes.get(nodeIds)[0];
+
+				const edgeIds = properties.edges;
+				const edge = edges.get(edgeIds)[0];
+
+        console.log(nodes.get(nodeIds));
+        if(node && node.custom && node.custom.node) {
+          vue.clickedNode = format(beautify(node.custom.node, null as any, 2, 100));
+        } else {
+          vue.clickedNode = '';
+        }
+        if(edge && edge.custom && edge.custom.connection) {
+          vue.clickedEdge = format(beautify(edge.custom.connection, null as any, 2, 100));
+        } else {
+          vue.clickedEdge = '';
+        }
+			});
 		}
 	}
 });
 </script>
 
 <style>
+.json_small {
+  font-size: 10px;
+  background-color: #111;
+}
 </style>
