@@ -103,7 +103,6 @@ export default Vue.extend({
 				const edgeIds = properties.edges;
 				const edge = edges.get(edgeIds)[0];
 
-        console.log(nodes.get(nodeIds));
         if(node && node.custom && node.custom.node) {
           vue.clickedNode = format(beautify(node.custom.node, null as any, 2, 100));
         } else {

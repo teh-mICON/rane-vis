@@ -8,6 +8,10 @@ import "typeface-roboto";
 import "typeface-source-sans-pro";
 import "typeface-montserrat";
 
+interface Function {
+  name: string;
+}
+
 Vue.config.productionTip = false
 new Vue({
   render: h => h(control),

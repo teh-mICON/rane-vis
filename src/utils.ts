@@ -21,7 +21,7 @@ function createPerceptronGenome(...args: any) {
   let prevLayer = [] as any;
   for(let i = 0; i < input; i++) {
     prevLayer.push(id);
-    genome.addNodeGene(id++, NODE_TYPE.input, 0, 'relu', true);
+    genome.addNodeGene(id++, NODE_TYPE.input, 0, 'identity', true);
   }
 
   _.each(hidden, layer => {
@@ -41,7 +41,7 @@ function createPerceptronGenome(...args: any) {
   const currentLayer = [] as any;
   for(let i = 0; i < output; i++) {
     currentLayer.push(id)
-    genome.addNodeGene(id++, NODE_TYPE.output, 1, 'sigmoid', true);
+    genome.addNodeGene(id++, NODE_TYPE.output, 0, 'relu', true);
   }
   _.each(currentLayer, currentLayerId => {
     _.each(prevLayer, prevLayerId => {
@@ -56,18 +56,21 @@ export default {
   createPerceptronGenome,
   examples: {
     mirror: [
-      { input: [0, 0, 0], output: [0, 0, 0] },
       { input: [1, 0, 0], output: [1, 0, 0] },
       { input: [0, 1, 0], output: [0, 1, 0] },
-      { input: [0, 0, 1], output: [0, 0, 1] }
+      { input: [0, 0, 1], output: [0, 0, 1] },
     ],
     AND: [
       { input: [0, 0], output: [0] },
       { input: [0, 1], output: [0] },
       { input: [1, 0], output: [0] },
       { input: [1, 1], output: [1] },
+      { input: [1, 1], output: [1] },
+      { input: [1, 1], output: [1] },
     ],
     OR: [
+      { input: [0, 0], output: [0] },
+      { input: [0, 0], output: [0] },
       { input: [0, 0], output: [0] },
       { input: [0, 1], output: [1] },
       { input: [1, 0], output: [1] },

@@ -42,6 +42,7 @@ import Vue from "vue";
 import Graph from "../components/graph.vue";
 import Genome from "../components/genome.vue";
 import utils from "../utils";
+import Squash from '../../../rane/src/Squash'
 
 import _ from "lodash";
 
@@ -64,16 +65,16 @@ export default Vue.extend({
 			exampleIterator: 0,
 			results: [],
 			frame: 0,
-			goestimes: 10000,
+			goestimes: 100,
 			loss: 0
 		};
 	},
 	async created() {
 		document.title = "rane 0-3";
 		this.genome = utils.createPerceptronGenome("mirror", 3, 6, 6, 3);
-		this.network = new Network({ learningRate: 0.01 }, this.genome);
+		this.network = new Network({ learningRate: .1 }, this.genome);
 		this.network.activate(this.examples[0].input);
-		this.genome = this.network.getGenome();
+    this.genome = this.network.getGenome();
 	},
 	methods: {
 		setExample(index) {
@@ -85,7 +86,7 @@ export default Vue.extend({
         this.genome = this.network.getGenome();
         this.frame++;
 			} else {
-				this.genome = utils.createPerceptronGenome(index, 2, 5, 1);
+        this.genome = utils.createPerceptronGenome(index, 2, 5, 1);
 				this.network = new Network({ learningRate: 0.01 }, this.genome);
 				this.network.activate(this.examples[0].input);
 				this.genome = this.network.getGenome();
