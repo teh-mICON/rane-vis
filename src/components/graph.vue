@@ -67,7 +67,8 @@ export default Vue.extend({
 				return {
 					from: connection.from,
 					to: connection.to,
-					width,
+          width,
+          delta: connection.delta,
 					arrows: "to",
 					color: connection.weight > 0 ? "green" : "red",
 					custom: { connection }

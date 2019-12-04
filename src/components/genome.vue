@@ -28,7 +28,17 @@ export default Vue.extend({
 	},
 
 	mounted() {
-		this.json = format(beautify(this.genome, null as any, 2, 100));
+    const genome = {weights: [], biases: {} }
+
+    _.each(this.genome.connections, connection => {
+      genome.weights.push({ id: connection.innovation, weight: Math.round(connection.weight * 10000) / 10000 })
+    })
+
+    _.each(this.genome.nodes, node => {
+      genome.biases[node.bias.id] = Math.round(node.bias.value * 10000) / 10000;
+    })
+
+		this.json = format(beautify(genome, null as any, 2, 100));
 	}
 });
 </script>

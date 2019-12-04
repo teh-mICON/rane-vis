@@ -43,17 +43,17 @@ export default Vue.extend({
 		genome.addNodeGene(5, NODE_TYPE.output, 0.6, "sigmoid", true);
 
 		let innovation = 1;
-		genome.addConnectionGene(0, 2, 0.15, innovation++, true); // w1
-		genome.addConnectionGene(1, 2, 0.2, innovation++, true); // w2
+		genome.addConnectionGene(0, 2, 0.15, innovation++, 1, true); // w1
+		genome.addConnectionGene(1, 2, 0.2, innovation++, 1, true); // w2
 
-		genome.addConnectionGene(0, 3, 0.25, innovation++, true); // w3
-		genome.addConnectionGene(1, 3, 0.3, innovation++, true); // w4
+		genome.addConnectionGene(0, 3, 0.25, innovation++, 1, true); // w3
+		genome.addConnectionGene(1, 3, 0.3, innovation++, 1, true); // w4
 
-		genome.addConnectionGene(2, 4, 0.4, innovation++, true); // w5
-		genome.addConnectionGene(3, 4, 0.45, innovation++, true); // w6
+		genome.addConnectionGene(2, 4, 0.4, innovation++, 1, true); // w5
+		genome.addConnectionGene(3, 4, 0.45, innovation++, 1, true); // w6
 
-		genome.addConnectionGene(2, 5, 0.5, innovation++, true); // w7
-		genome.addConnectionGene(3, 5, 0.55, innovation++, true); // w8
+		genome.addConnectionGene(2, 5, 0.5, innovation++, 1, true); // w7
+		genome.addConnectionGene(3, 5, 0.55, innovation++, 1, true); // w8
 
 		let network = new Network(
 			{ input: 2, output: 2, learningRate: 0.5 },

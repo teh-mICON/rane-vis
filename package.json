@@ -18,7 +18,9 @@
     "typeface-roboto": "0.0.75",
     "typeface-source-sans-pro": "0.0.75",
     "vis-network": "^6.0.0",
-    "vue": "^2.6.10"
+    "vue": "^2.6.10",
+    "vue-chartist": "^2.2.1",
+    "vuetrend": "^0.3.4"
   },
   "devDependencies": {
     "@vue/cli-plugin-typescript": "^3.11.0",
