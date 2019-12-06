@@ -54,9 +54,6 @@ import _ from "lodash";
 
 import Network from "../../../rane/src/Network";
 import Memory from "../../../rane/src/Memory";
-import Log from "../../../rane/src/Log";
-
-Log.setFilters(Log.filters.FORWARD); //Log.filters.DERIVATIVES, Log.filters.HIDDEN, Log.filters.OUTPUT);
 
 export default Vue.extend({
 	name: "app",
@@ -131,7 +128,6 @@ export default Vue.extend({
 			_.times(example.output.length, index => {
 				before += Math.pow(outputBefore[index] - example.output[index], 2);
       });
-      //console.log('BEFORE', before * .5)
 
 			let loss = 0;
 			const actual = this.network.train(example);
@@ -147,7 +143,6 @@ export default Vue.extend({
 				loss += Math.pow(actual[index] - example.output[index], 2);
       });
       
-      //console.log('AFTER', loss)
 
 			this.loss = loss * 0.5;
 			this.errors.push(this.loss);
