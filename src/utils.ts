@@ -1,5 +1,6 @@
 import * as vis from "vis-network";
 import * as _ from "lodash";
+import * as mnist from 'mnist'
 
 import Genome from "../../rane/src/Genome";
 import Node from "../../rane/src/Node";
@@ -92,65 +93,70 @@ mazurGenome.addConnectionGene(3, 4, 0.45, innovation++, true); // w6
 mazurGenome.addConnectionGene(2, 5, 0.5, innovation++, true); // w7
 mazurGenome.addConnectionGene(3, 5, 0.55, innovation++, true); // w8
 
+const mnistTrainingSet = mnist.set(10, 9990).training
+
+const examples = {
+  mirror: [
+    { input: [1, 0, 0], output: [1, 0, 0] },
+    { input: [0, 1, 0], output: [0, 1, 0] },
+    { input: [0, 0, 1], output: [0, 0, 1] }
+  ],
+  mazur: [
+    { input: [.05, .10], output: [.01, .99] }
+  ],
+  X2: [
+    { input: [1], output: [2] },
+    { input: [2], output: [4] },
+    { input: [3], output: [6] },
+    { input: [4], output: [8] },
+    { input: [5], output: [10] },
+    { input: [6], output: [12] }
+  ],
+  AND: [
+    { input: [0.1, 0.1], output: [0.1] },
+    { input: [0.1, 1], output: [0.1] },
+    { input: [1, 0.1], output: [0.1] },
+    { input: [1, 1], output: [1] },
+    { input: [1, 1], output: [1] },
+    { input: [1, 1], output: [1] }
+  ],
+  OR: [
+    { input: [0.1, 0.1], output: [0.1] },
+    { input: [0.1, 0.1], output: [0.1] },
+    { input: [0.1, 0.1], output: [0.1] },
+    { input: [0.1, 1], output: [1] },
+    { input: [1, 0.1], output: [1] },
+    { input: [1, 1], output: [1] }
+  ],
+  XOR: [
+    { input: [0.1, 0.1], output: [0.1] },
+    { input: [0.1, 1], output: [1] },
+    { input: [1, 0.1], output: [1] },
+    { input: [1, 1], output: [0.1] }
+  ],
+  NAND: [
+    { input: [0.1, 0.1], output: [1] },
+    { input: [0.1, 1], output: [1] },
+    { input: [1, 0.1], output: [1] },
+    { input: [1, 1], output: [0.1] }
+  ],
+  NOR: [
+    { input: [0.1, 0.1], output: [1] },
+    { input: [0.1, 1], output: [0.1] },
+    { input: [1, 0.1], output: [0.1] },
+    { input: [1, 1], output: [0.1] }
+  ],
+  XNOR: [
+    { input: [0.1, 0.1], output: [1] },
+    { input: [0.1, 1], output: [0.1] },
+    { input: [1, 0.1], output: [0.1] },
+    { input: [1, 1], output: [1] }
+  ],
+  mnist: mnistTrainingSet
+};
+
 export default {
   createPerceptronGenome,
   mazurGenome,
-	examples: {
-		mirror: [
-			{ input: [1, 0, 0], output: [1, 0, 0] },
-			{ input: [0, 1, 0], output: [0, 1, 0] },
-			{ input: [0, 0, 1], output: [0, 0, 1] }
-    ],
-    mazur: [
-      { input: [.05, .10], output: [.01, .99] }
-    ],
-		X2: [
-			{ input: [1], output: [2] },
-			{ input: [2], output: [4] },
-			{ input: [3], output: [6] },
-			{ input: [4], output: [8] },
-			{ input: [5], output: [10] },
-			{ input: [6], output: [12] }
-		],
-		AND: [
-			{ input: [0.1, 0.1], output: [0.1] },
-			{ input: [0.1, 1], output: [0.1] },
-			{ input: [1, 0.1], output: [0.1] },
-			{ input: [1, 1], output: [1] },
-			{ input: [1, 1], output: [1] },
-			{ input: [1, 1], output: [1] }
-		],
-		OR: [
-			{ input: [0.1, 0.1], output: [0.1] },
-			{ input: [0.1, 0.1], output: [0.1] },
-			{ input: [0.1, 0.1], output: [0.1] },
-			{ input: [0.1, 1], output: [1] },
-			{ input: [1, 0.1], output: [1] },
-			{ input: [1, 1], output: [1] }
-		],
-		XOR: [
-			{ input: [0.1, 0.1], output: [0.1] },
-			{ input: [0.1, 1], output: [1] },
-			{ input: [1, 0.1], output: [1] },
-			{ input: [1, 1], output: [0.1] }
-		],
-		NAND: [
-			{ input: [0.1, 0.1], output: [1] },
-			{ input: [0.1, 1], output: [1] },
-			{ input: [1, 0.1], output: [1] },
-			{ input: [1, 1], output: [0.1] }
-		],
-		NOR: [
-			{ input: [0.1, 0.1], output: [1] },
-			{ input: [0.1, 1], output: [0.1] },
-			{ input: [1, 0.1], output: [0.1] },
-			{ input: [1, 1], output: [0.1] }
-		],
-		XNOR: [
-			{ input: [0.1, 0.1], output: [1] },
-			{ input: [0.1, 1], output: [0.1] },
-			{ input: [1, 0.1], output: [0.1] },
-			{ input: [1, 1], output: [1] }
-		]
-	}
+	examples
 };

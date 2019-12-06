@@ -1,20 +1,21 @@
 <template>
 	<div :key="frame">
-		<Graph :genome="genome" v-if="genome" />
+		<!--<Graph :genome="genome" v-if="genome" />-->
 		<table id="result">
-			<tr v-for="(result, index) in results" :key="index">
+			<!--<tr v-for="(result, index) in results" :key="index">
 				<td class="input">{{result.input}}</td>
 				<td class="ideal">{{result.ideal}}</td>
 				<td class="actual">{{result.actual}}</td>
-			</tr>
+			</tr>-->
 		</table>
 		<div id="loss">{{loss}}</div>
 		<div class="input-group mb-3">
 			<div class="input-group-prepend">
 				<button type="button" class="btn btn-primary" @click="resetErrors">resetErrors</button>
 				<button @click="goes" class="btn btn-primary">GOES</button>
+				<button @click="goesX" class="btn btn-primary">GOES X</button>
 				<button @click="goesAll" class="btn btn-primary">GOESALL</button>
-				<button @click="goesX" class="btn btn-primary" type="button">GOES ALL X</button>
+				<button @click="goesAllX" class="btn btn-primary" type="button">GOES ALL X</button>
 			</div>
 			<input
 				type="text"
@@ -26,6 +27,7 @@
 			/>
 		</div>
 		<div class="btn-group" role="group" aria-label="Basic example">
+			<button type="button" class="btn btn-secondary" @click="setExample('mnist')">MNIST</button>
 			<button type="button" class="btn btn-secondary" @click="setExample('mirror')">mirror</button>
 			<button type="button" class="btn btn-secondary" @click="setExample('X2')">X2</button>
 			<button type="button" class="btn btn-secondary" @click="setExample('mazur')">Mazur</button>
@@ -37,7 +39,7 @@
 			<button type="button" class="btn btn-secondary" @click="setExample('XNOR')">XNOR</button>
 		</div>
 		<Errors :errors="errors" v-if="errors" />
-		<Genome :genome="genome" v-if="genome" />
+		<!--<Genome :genome="genome" v-if="genome" />-->
 	</div>
 </template>
 
@@ -78,8 +80,8 @@ export default Vue.extend({
 		};
 	},
 	async created() {
-		document.title = "rane 0-3";
-		this.setExample("mazur");
+		document.title = "rane";
+		this.setExample("mnist");
 	},
 	methods: {
 		resetErrors() {
@@ -88,7 +90,13 @@ export default Vue.extend({
 		setExample(index) {
 			this.resetErrors();
 			this.examples = utils.examples[index];
-			if (index == "mirror") {
+			if (index == "mnist") {
+				this.genome = utils.createPerceptronGenome("mnist", 784, 200, 80, 10);
+				this.network = new Network({ learningRate: 0.01 }, this.genome);
+				//this.network.activate(this.examples[0].input);
+				//this.genome = this.network.getGenome();
+				//this.frame++;
+			}	else if (index == "mirror") {
 				this.genome = utils.createPerceptronGenome("mirror", 3, 6, 6, 3);
 				this.network = new Network({ learningRate: 0.01 }, this.genome);
 				this.network.activate(this.examples[0].input);
@@ -170,6 +178,12 @@ export default Vue.extend({
 			this.frame++;
 		},
 		goesX() {
+			for (let i = 0; i < this.goestimes; i++) {
+        this.goes();
+        console.log('went', i)
+			}
+		},
+		goesAllX() {
 			for (let i = 0; i < this.goestimes; i++) {
 				this.goesAll();
 			}
