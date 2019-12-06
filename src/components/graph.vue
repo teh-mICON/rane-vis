@@ -77,7 +77,7 @@ export default Vue.extend({
 
 			const options = {
 				autoResize: true,
-				height: "500px",
+				height: "250px",
 				width: "100%",
 				edges: {
 					smooth: {

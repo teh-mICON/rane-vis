@@ -12,6 +12,9 @@ interface Function {
   name: string;
 }
 
+import Trend from "vuetrend";
+Vue.use(Trend)
+
 Vue.config.productionTip = false
 new Vue({
   render: h => h(control),
