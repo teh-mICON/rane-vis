@@ -79,7 +79,7 @@ export default Vue.extend({
 	},
 	async created() {
 		document.title = "rane 0-3";
-		this.setExample("mazur");
+		this.setExample("XOR");
 	},
 	methods: {
 		resetErrors() {
@@ -104,8 +104,8 @@ export default Vue.extend({
 				this.network.activate(this.examples[0].input);
 				this.genome = this.network.getGenome();
 			} else {
-				this.genome = utils.createPerceptronGenome(index, 2, 5, 5, 1);
-				this.network = new Network({ learningRate: 0.001 }, this.genome);
+				this.genome = utils.createPerceptronGenome(index, 2, 5, 1);
+				this.network = new Network({ learningRate: 0.01 }, this.genome);
 				this.network.activate(this.examples[0].input);
 				this.genome = this.network.getGenome();
 				this.frame++;
