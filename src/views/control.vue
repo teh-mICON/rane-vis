@@ -105,7 +105,7 @@ export default Vue.extend({
 				this.genome = this.network.getGenome();
 			} else {
 				this.genome = utils.createPerceptronGenome(index, 2, 5, 1);
-				this.network = new Network({ learningRate: 0.01 }, this.genome);
+				this.network = new Network({ learningRate: 0.5 }, this.genome);
 				this.network.activate(this.examples[0].input);
 				this.genome = this.network.getGenome();
 				this.frame++;
@@ -119,15 +119,15 @@ export default Vue.extend({
 					this.examples = _.shuffle(this.examples);
 				}
 				return example;
-      };
-      
-      const outputBefore = this.network.getOutput();
+			};
+
+			const outputBefore = this.network.getOutput();
 
 			const example = getExample();
 			let before = 0;
 			_.times(example.output.length, index => {
 				before += Math.pow(outputBefore[index] - example.output[index], 2);
-      });
+			});
 
 			let loss = 0;
 			const actual = this.network.train(example);
@@ -141,8 +141,7 @@ export default Vue.extend({
 
 			_.times(example.output.length, index => {
 				loss += Math.pow(actual[index] - example.output[index], 2);
-      });
-      
+			});
 
 			this.loss = loss * 0.5;
 			this.errors.push(this.loss);
@@ -171,7 +170,26 @@ export default Vue.extend({
 		},
 		goesX() {
 			for (let i = 0; i < this.goestimes; i++) {
-				this.goesAll();
+				const example = _.sample(this.examples);
+				this.network.train(example);
+
+				let loss = 0;
+				this.results = [];
+				_.each(this.examples, example => {
+					const actual = this.network.activate(example.input);
+					this.results.push({
+						input: example.input,
+						ideal: example.output,
+						actual: actual
+					});
+					_.times(example.output.length, index => {
+						loss += Math.pow(actual[index] - example.output[index], 2);
+					});
+				});
+				this.loss = loss * 0.01;
+				this.errors.push(this.loss);
+				this.genome = this.network.getGenome();
+				this.frame++;
 			}
 		}
 	}
