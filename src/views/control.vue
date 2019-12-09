@@ -72,14 +72,14 @@ export default Vue.extend({
 			exampleIterator: 0,
 			results: [],
 			frame: 0,
-			goestimes: 100,
+			goestimes: 1000,
 			loss: 0,
 			errors: []
 		};
 	},
 	async created() {
 		document.title = "rane 0-3";
-		this.setExample("mazur");
+		this.setExample("XOR");
 	},
 	methods: {
 		resetErrors() {
@@ -104,30 +104,22 @@ export default Vue.extend({
 				this.network.activate(this.examples[0].input);
 				this.genome = this.network.getGenome();
 			} else {
-				this.genome = utils.createPerceptronGenome(index, 2, 5, 5, 1);
-				this.network = new Network({ learningRate: 0.001 }, this.genome);
+				this.genome = utils.createPerceptronGenome(index, 2, 5, 1);
+				this.network = new Network({ learningRate: 0.5 }, utils.narfGenome);
 				this.network.activate(this.examples[0].input);
 				this.genome = this.network.getGenome();
 				this.frame++;
 			}
 		},
 		goes() {
-			const getExample = () => {
-				const example = this.examples[this.exampleIterator++];
-				if (this.exampleIterator == this.examples.length) {
-					this.exampleIterator = 0;
-					this.examples = _.shuffle(this.examples);
-				}
-				return example;
-      };
-      
-      const outputBefore = this.network.getOutput();
+			const outputBefore = this.network.getOutput();
 
-			const example = getExample();
+      //const example = _.sample(this.examples);
+      const example = this.examples[0]
 			let before = 0;
 			_.times(example.output.length, index => {
 				before += Math.pow(outputBefore[index] - example.output[index], 2);
-      });
+			});
 
 			let loss = 0;
 			const actual = this.network.train(example);
@@ -141,8 +133,7 @@ export default Vue.extend({
 
 			_.times(example.output.length, index => {
 				loss += Math.pow(actual[index] - example.output[index], 2);
-      });
-      
+			});
 
 			this.loss = loss * 0.5;
 			this.errors.push(this.loss);
@@ -152,8 +143,10 @@ export default Vue.extend({
 		goesAll() {
 			let loss = 0;
 			this.results = [];
-			_.each(_.shuffle(this.examples), example => {
-				const actual = this.network.train(example);
+			//_.each(_.shuffle(this.examples), example => {
+			_.each(this.examples, example => {
+        const actual = this.network.train(example);
+        //const actual = this.network.activate(example.input)
 				this.results.push({
 					input: example.input,
 					ideal: example.output,
@@ -171,7 +164,27 @@ export default Vue.extend({
 		},
 		goesX() {
 			for (let i = 0; i < this.goestimes; i++) {
-				this.goesAll();
+				let loss = 0;
+				this.results = [];
+				const example = _.sample(this.examples);
+				this.network.train(example);
+
+				_.each(this.examples, example => {
+          const actual = this.network.activate(example.input)
+					this.results.push({
+						input: example.input,
+						ideal: example.output,
+						actual: actual
+					});
+
+					_.times(example.output.length, index => {
+						loss += Math.pow(actual[index] - example.output[index], 2);
+					});
+					this.loss = loss * 0.5;
+					this.errors.push(this.loss);
+					this.genome = this.network.getGenome();
+					this.frame++;
+				});
 			}
 		}
 	}

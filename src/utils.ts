@@ -92,9 +92,36 @@ mazurGenome.addConnectionGene(3, 4, 0.45, innovation++, true); // w6
 mazurGenome.addConnectionGene(2, 5, 0.5, innovation++, true); // w7
 mazurGenome.addConnectionGene(3, 5, 0.55, innovation++, true); // w8
 
+
+const narfGenome = new Genome();
+narfGenome.addNodeGene(0, NODE_TYPE.input, .1, "sigmoid", true);
+narfGenome.addNodeGene(1, NODE_TYPE.input, .1, "sigmoid", true);
+narfGenome.addNodeGene(2, NODE_TYPE.hidden, .1, "sigmoid", true);
+narfGenome.addNodeGene(3, NODE_TYPE.hidden, .1, "sigmoid", true);
+narfGenome.addNodeGene(4, NODE_TYPE.hidden, .1, "sigmoid", true);
+narfGenome.addNodeGene(5, NODE_TYPE.hidden, .1, "sigmoid", true);
+narfGenome.addNodeGene(6, NODE_TYPE.hidden, .1, "sigmoid", true);
+narfGenome.addNodeGene(7, NODE_TYPE.output, .1, "sigmoid", true);
+
+let blarb = .1;
+let inno = 0;
+  for (let h = 2; h <= 6; h++) {
+    narfGenome.addConnectionGene(h, 7, blarb, ++inno);
+    blarb += .1;
+  }
+
+  blarb = .1;
+  for(let h = 2; h <= 6; h++) {
+    for(let i = 0; i <= 1; i++) {
+      narfGenome.addConnectionGene(i, h, blarb, ++inno);
+      blarb += .1;
+    }
+  }
+
 export default {
   createPerceptronGenome,
   mazurGenome,
+  narfGenome,
 	examples: {
 		mirror: [
 			{ input: [1, 0, 0], output: [1, 0, 0] },
@@ -129,10 +156,10 @@ export default {
 			{ input: [1, 1], output: [1] }
 		],
 		XOR: [
-			{ input: [0.1, 0.1], output: [0.1] },
-			{ input: [0.1, 1], output: [1] },
-			{ input: [1, 0.1], output: [1] },
-			{ input: [1, 1], output: [0.1] }
+			{ input: [0, 1], output: [1] },
+			{ input: [0, 0], output: [0] },
+			{ input: [1, 0], output: [1] },
+			{ input: [1, 1], output: [0] }
 		],
 		NAND: [
 			{ input: [0.1, 0.1], output: [1] },
