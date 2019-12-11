@@ -28,10 +28,10 @@ export default Vue.extend({
 	},
 
 	mounted() {
-    const genome = {weights: [], biases: {} }
+    const genome = {connections: [], biases: {} }
 
     _.each(this.genome.connections, connection => {
-      genome.weights.push({ id: connection.innovation, weight: Math.round(connection.weight * 100000000) / 100000000 })
+      genome.connections.push({ id: connection.innovation, weight: Math.round(connection.weight * 100000000) / 100000000, delta: connection.delta })
     })
 
     _.each(this.genome.nodes, node => {

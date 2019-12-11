@@ -105,7 +105,7 @@ export default Vue.extend({
 				this.network.activate(this.examples[0].input);
 				this.genome = this.network.getGenome();
 			} else {
-				this.genome = utils.createPerceptronGenome(index, 2, 5, 1);
+				this.genome = utils.createPerceptronGenome('wtf' + index, 2, 5, 1);
 				this.network = new Network({ learningRate: 0.01 }, this.genome);
 				this.network.activate(this.examples[0].input);
 				this.genome = this.network.getGenome();
@@ -171,7 +171,8 @@ export default Vue.extend({
 		},
 		goesX() {
 			let i = this.goestimes;
-			const goes = () => {
+      
+      const goes = () => {
 				const example = _.sample(this.examples);
 				this.network.train(example);
 

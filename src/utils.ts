@@ -31,7 +31,7 @@ function createPerceptronGenome(...args: any) {
 			genome.addNodeGene(
 				id++,
 				NODE_TYPE.hidden,
-				random() * 2 - 1,
+				random(),
 				"sigmoid",
 				true
 			);
