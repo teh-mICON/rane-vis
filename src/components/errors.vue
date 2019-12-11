@@ -14,7 +14,7 @@ export default Vue.extend({
 	data() {
 		return {
       chart: this.errors,
-      gradient: ['#0FF', '#FF0']
+      gradient: ['#F00', '#0F0']
 		};
 	},
 

@@ -87,7 +87,7 @@ export default Vue.extend({
 				},
 				layout: {
 					hierarchical: {
-						direction: "UD",
+						direction: "LR",
 						sortMethod: "directed"
 					}
 				},

@@ -8,7 +8,7 @@
 				<td class="actual">{{result.actual}}</td>
 			</tr>
 		</table>
-		<div id="loss">{{loss}}</div>
+		<div id="loss">{{goestimes - epoch}}: {{loss}}</div>
 		<div class="input-group mb-3">
 			<div class="input-group-prepend">
 				<button type="button" class="btn btn-primary" @click="resetErrors">resetErrors</button>
@@ -72,9 +72,10 @@ export default Vue.extend({
 			exampleIterator: 0,
 			results: [],
 			frame: 0,
-			goestimes: 100,
+			goestimes: 100000,
 			loss: 0,
-			errors: []
+			errors: [],
+			epoch: 0
 		};
 	},
 	async created() {
@@ -105,7 +106,7 @@ export default Vue.extend({
 				this.genome = this.network.getGenome();
 			} else {
 				this.genome = utils.createPerceptronGenome(index, 2, 5, 1);
-				this.network = new Network({ learningRate: 0.5 }, this.genome);
+				this.network = new Network({ learningRate: 0.01 }, this.genome);
 				this.network.activate(this.examples[0].input);
 				this.genome = this.network.getGenome();
 				this.frame++;
@@ -151,7 +152,7 @@ export default Vue.extend({
 		goesAll() {
 			let loss = 0;
 			this.results = [];
-			_.each(_.shuffle(this.examples), example => {
+			_.each(this.examples, example => {
 				const actual = this.network.train(example);
 				this.results.push({
 					input: example.input,
@@ -169,28 +170,36 @@ export default Vue.extend({
 			this.frame++;
 		},
 		goesX() {
-			for (let i = 0; i < this.goestimes; i++) {
+			let i = this.goestimes;
+			const goes = () => {
 				const example = _.sample(this.examples);
 				this.network.train(example);
 
 				let loss = 0;
-				this.results = [];
-				_.each(this.examples, example => {
-					const actual = this.network.activate(example.input);
-					this.results.push({
-						input: example.input,
-						ideal: example.output,
-						actual: actual
+				if (i == 0 || i % 100 == 0) {
+					this.results = [];
+					_.each(this.examples, example => {
+						const actual = this.network.activate(example.input);
+						this.results.push({
+							input: example.input,
+							ideal: example.output,
+							actual: Math.round(+actual * 1000000) / 1000000
+						});
+						_.times(example.output.length, index => {
+							loss += Math.pow(actual[index] - example.output[index], 2);
+						});
 					});
-					_.times(example.output.length, index => {
-						loss += Math.pow(actual[index] - example.output[index], 2);
-					});
-				});
-				this.loss = loss * 0.01;
-				this.errors.push(this.loss);
-				this.genome = this.network.getGenome();
-				this.frame++;
-			}
+					this.loss = loss * 0.5;
+					this.errors.push(this.loss);
+					this.genome = this.network.getGenome();
+					this.frame++;
+					this.epoch = i;
+				}
+				if (i-- > 0 && this.loss > 0.01) {
+					window.setTimeout(goes, 1);
+				}
+			};
+			window.setTimeout(goes, 10);
 		}
 	}
 });
