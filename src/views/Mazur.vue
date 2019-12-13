@@ -16,7 +16,6 @@ import _ from "lodash";
 import Network from "../../../rane/src/Network";
 import { NODE_TYPE } from "../../../rane/src/Node";
 import Genome from "../../../rane/src/Genome";
-import Memory from "../../../rane/src/Memory";
 
 // https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/
 export default Vue.extend({

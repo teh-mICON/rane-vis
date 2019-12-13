@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --port 8080",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build",
+    "console": "webpack --watch src/console.ts"
   },
   "dependencies": {
+    "3d-force-graph": "^1.56.5",
     "bootswatch": "^4.3.1",
     "hex2dec": "^1.1.2",
     "json-beautify": "^1.1.1",
@@ -14,12 +16,15 @@
     "json-prettify": "^1.2.0",
     "mnist": "^1.1.0",
     "seedrandom": "^3.0.5",
+    "ts-loader": "^6.2.1",
     "typeface-montserrat": "0.0.75",
     "typeface-roboto": "0.0.75",
     "typeface-source-sans-pro": "0.0.75",
     "vis-network": "^6.0.0",
     "vue": "^2.6.10",
-    "vuetrend": "^0.3.4"
+    "vuetrend": "^0.3.4",
+    "webpack-cli": "^3.3.10",
+    "webpack-shell-plugin": "^0.5.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-typescript": "^3.11.0",

@@ -6,13 +6,17 @@ import Node from "../../rane/src/Node";
 import { NODE_TYPE } from "../../rane/src/Node";
 import seedrandom from "seedrandom";
 
+
+const random = seedrandom('seeeeed');
+
+const randomWeight = () => {
+  return (random() * 2 - 1)
+}
 function createPerceptronGenome(...args: any) {
-	const seed = args.splice(0, 1)[0];
+  const activation = args.splice(0, 1)[0];
 	const input = args.splice(0, 1)[0];
 	const output = args.splice(args.length - 1, args.length)[0];
 	const hidden = args;
-
-	const random = seedrandom(seed);
 
 	const genome = new Genome();
 	let innovation = 1;
@@ -32,7 +36,7 @@ function createPerceptronGenome(...args: any) {
 				id++,
 				NODE_TYPE.hidden,
 				random(),
-				"sigmoid",
+				activation,
 				true
 			);
 		}
@@ -41,7 +45,7 @@ function createPerceptronGenome(...args: any) {
 				genome.addConnectionGene(
 					prevLayerId,
 					currentLayerId,
-					random() * 2 - 1,
+					randomWeight(),
 					innovation++,
 					true
 				);
@@ -60,7 +64,7 @@ function createPerceptronGenome(...args: any) {
 			genome.addConnectionGene(
 				prevLayerId,
 				currentLayerId,
-				random() * 2 - 1,
+        randomWeight(),
 				innovation++,
 				true
 			);
@@ -117,7 +121,13 @@ let inno = 0;
     }
   }
 
-
+  function normalize(low, high, value) {
+    return (value - low) / (high - low);
+  }
+  function denormalize(low, high, value) {
+    return +low + value * (high - low);
+  }
+  
 export default {
   createPerceptronGenome,
   mazurGenome,
@@ -132,12 +142,12 @@ export default {
       { input: [.05, .10], output: [.01, .99] }
     ],
 		X2: [
-			{ input: [1], output: [2] },
-			{ input: [2], output: [4] },
-			{ input: [3], output: [6] },
-			{ input: [4], output: [8] },
-			{ input: [5], output: [10] },
-			{ input: [6], output: [12] }
+			{ input: [normalize(1, 6, 1)], output: [normalize(2, 12, 2)] },
+			{ input: [normalize(1, 6, 2)], output: [normalize(2, 12, 4)] },
+			{ input: [normalize(1, 6, 3)], output: [normalize(2, 12, 6)] },
+			{ input: [normalize(1, 6, 4)], output: [normalize(2, 12, 8)] },
+			{ input: [normalize(1, 6, 5)], output: [normalize(2, 12, 10)] },
+			{ input: [normalize(1, 6, 6)], output: [normalize(2, 12, 12)] }
 		],
 		AND: [
 			{ input: [0, 0], output: [0] },

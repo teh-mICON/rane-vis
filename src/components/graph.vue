@@ -1,6 +1,7 @@
 <template>
 	<div>
-		<div ref="graph"></div>
+		<div ref="graph2d" id="graph2d"></div>
+		<div ref="graph3d" id="graph3d" v-if="goes3d"></div>
 		<pre v-html="clickedNode" class="json_small"></pre>
 		<pre v-html="clickedEdge" class="json_small"></pre>
 	</div>
@@ -8,13 +9,23 @@
 
 <script lang="ts">
 import Vue from "vue";
+import ForceGraph3D from "3d-force-graph";
 import * as vis from "vis-network";
 import * as _ from "lodash";
 import beautify from "json-beautify";
 import * as format from "json-format-highlight";
 import Converter from "hex2dec";
+import Network from "../../../rane/src/Network";
+import Node from "../../../rane/src/Node";
+import { NODE_TYPE } from "../../../rane/src/Node";
 
 import utils from "../utils";
+
+const NETVIS_COLORS = {
+  input: '#4b8c48',
+  hidden: '#48688c',
+  action: '#b80f0f'
+};
 
 function normalize(low, high, value) {
 	return (value - low) / (high - low);
@@ -26,54 +37,76 @@ function denormalize(low, high, value) {
 export default Vue.extend({
 	name: "vis",
 
-	props: ["genome"],
+	props: ["network"],
 	data() {
-		return { clickedEdge: null, clickedNode: null };
+		return { clickedEdge: null, clickedNode: null, goes3d: false };
 	},
 
 	mounted() {
-		this.graph(this.$refs["graph"], this.genome, this);
+		this.graph(this.$refs["graph2d"], this.network, this);
+    if(this.goes3d)
+      this.graph3d(this.$refs["graph3d"], this.network, this);
 	},
 
 	methods: {
-		graph: async (element, genome, vue) => {
-			const nodesRaw = genome.nodes.map((node, i) => {
-				let color;
-				if (node.type == "input") color = "#dbdd60";
-				if (node.type == "hidden") color = "#92b6ce";
-				if (node.type == "output") color = "#fff";
+		graph: async (element, network: Network, vue) => {
+			const nodesRaw = _.map(network.getNodes(), (node: Node) => {
+        let border;
+				if (node.getType() == NODE_TYPE.input) border = "#dbdd60";
+				if (node.getType() == NODE_TYPE.hidden) border = "#92b6ce";
+				if (node.getType() == NODE_TYPE.output) border = "#ffffff";
 
-				const dec = Math.floor(denormalize(0, 255, node.activation));
+				const dec = Math.floor(denormalize(0, 255, node.getOutput()));
 				const hex = Converter.decToHex("" + dec, { prefix: false });
-				color = "#" + hex + hex + hex;
-
+				const color = "#" + hex + hex + hex;
+				const connectionMapper = connection => {
+					return {
+						from: connection.from.id,
+						to: connection.to.id,
+						weight: connection.weight,
+						delta: connection.delta
+					};
+				};
+				const connections = {
+					forward: _.map(node.getConnectionsForward(), connectionMapper),
+					backward: _.map(node.getConnectionsBackward(), connectionMapper)
+				};
 				return {
-					id: "" + node.id,
-					title: "" + node.id,
-					label: "" + node.id,
-					color,
-					custom: { node }
+					id: "" + node.getId(),
+					title: "" + node.getId(),
+					label: "" + node.getId(),
+          color: {
+            background: color, border, highlight: 'red'
+          },
+					custom: {
+						id: node.getId(),
+						netInput: node.getNetInput(),
+						output: node.getOutput(),
+						connections
+					}
 				};
 			}) as any;
 			const nodes = new vis.DataSet(nodesRaw) as any;
 
-			const filteredConnections = _.filter(genome.connections, connection => connection.enabled);
-
-			const max = _.maxBy(filteredConnections, connection => connection.weight).weight;
-      const min = _.minBy(filteredConnections, connection => connection.weight).weight;
-			const edgesRaw = filteredConnections.map(connection => {
+			const max = _.maxBy(network.getConnections(), connection => connection.weight)
+				.weight;
+			const min = _.minBy(network.getConnections(), connection => connection.weight)
+				.weight;
+			const edgesRaw = network.getConnections().map(connection => {
 				const normalized = normalize(min, max, connection.weight);
 				const width = denormalize(1, 10, normalized);
 				return {
-					from: connection.from,
-					to: connection.to,
+					from: connection.from.getId(),
+					to: connection.to.getId(),
 					width,
 					arrows: "to",
 					color: connection.weight > 0 ? "green" : "red",
 					custom: { connection }
 				};
 			}) as any;
-			const edges = new vis.DataSet(_.remove(edgesRaw, edge => edge !== null)) as any;
+			const edges = new vis.DataSet(
+				_.remove(edgesRaw, edge => edge !== null)
+			) as any;
 
 			const options = {
 				autoResize: true,
@@ -94,34 +127,86 @@ export default Vue.extend({
 				physics: false
 			} as any;
 
-			const network = new vis.Network(element, { nodes, edges }, options);
+			const visNetwork = new vis.Network(element, { nodes, edges }, options);
 
-			network.on("click", properties => {
+			visNetwork.on("click", properties => {
 				const nodeIds = properties.nodes;
 				const node = nodes.get(nodeIds)[0];
 
 				const edgeIds = properties.edges;
 				const edge = edges.get(edgeIds)[0];
 
-        if(node && node.custom && node.custom.node) {
-          vue.clickedNode = format(beautify(node.custom.node, null as any, 2, 100));
-        } else {
-          vue.clickedNode = '';
-        }
-        if(edge && edge.custom && edge.custom.connection) {
-          vue.clickedEdge = format(beautify(edge.custom.connection, null as any, 2, 100));
-        } else {
-          vue.clickedEdge = '';
-        }
+				if (node && node.custom ) {
+					vue.clickedNode = format(
+						beautify(node.custom, null as any, 2, 100)
+					);
+				} else {
+					vue.clickedNode = "";
+				}
+				if (edge && edge.custom && edge.custom.connection) {
+					vue.clickedEdge = format(
+						beautify(edge.custom.connection, null as any, 2, 100)
+					);
+				} else {
+					vue.clickedEdge = "";
+				}
 			});
-		}
+    },
+
+		async graph3d(element, network: Network, vue) {
+			const max = _.maxBy(network.getConnections(), connection => connection.weight)
+				.weight;
+			const min = _.minBy(network.getConnections(), connection => connection.weight)
+				.weight;
+
+			const gData = {
+				nodes: _.map(network.getNodes(), node => ({
+					id: node.getId(),
+					type: node.getType()
+				})),
+				links: _.map(network.getConnections(), connection => {
+					const normalized = normalize(min, max, connection.weight);
+					const width = denormalize(1, 3, normalized);
+					return {
+						source: connection.from.id,
+            target: connection.to.id,
+            weight: connection.weight,
+						width
+					};
+				})
+			};
+			const Graph = ForceGraph3D()(element)
+				.graphData(gData)
+				.linkDirectionalArrowLength(3.5)
+				.linkDirectionalArrowRelPos(1)
+        .linkCurvature(0.25)
+        .linkColor(link => {
+          return link.weight > 0 ? 'green' : 'red'
+        })
+				.nodeColor(node => {
+					if (node.type == "input") return NETVIS_COLORS.input;
+					if (node.type == "hidden") return NETVIS_COLORS.hidden;
+					if (node.type == "action") return NETVIS_COLORS.action;
+					return "#ff0000";
+				})
+				.linkWidth(node => node.width)
+        .height(500)
+        .backgroundColor('black') ;
+		}    
 	}
 });
 </script>
 
 <style>
 .json_small {
-  font-size: 10px;
-  background-color: #111;
+	font-size: 14px;
+	background-color: #111;
 }
+#graph2d {
+  background-color: black;
+}
+#graph3d {
+	height: 500px;
+}
+
 </style>
