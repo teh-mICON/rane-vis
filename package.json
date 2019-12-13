@@ -22,6 +22,7 @@
     "typeface-source-sans-pro": "0.0.75",
     "vis-network": "^6.0.0",
     "vue": "^2.6.10",
+    "vue-trend-chart": "^0.15.1",
     "vuetrend": "^0.3.4",
     "webpack-cli": "^3.3.10",
     "webpack-shell-plugin": "^0.5.0"

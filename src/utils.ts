@@ -189,5 +189,9 @@ export default {
 			{ input: [1, 0], output: [0] },
 			{ input: [1, 1], output: [1] }
 		]
-	}
+  },
+  toDecimaNum(number, places = 5) {
+    return number.toFixed(places).padEnd(places, '0')
+
+  }
 };

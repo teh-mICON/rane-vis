@@ -3,7 +3,7 @@ import control from './views/control.vue'
 
 
 // bootswatch & fonts
-import "bootswatch/dist/darkly/bootstrap.css";
+import "bootswatch/dist/lux/bootstrap.css";
 import "typeface-roboto";
 import "typeface-source-sans-pro";
 import "typeface-montserrat";
@@ -14,6 +14,9 @@ interface Function {
 
 import Trend from "vuetrend";
 Vue.use(Trend)
+
+import TrendChart from "vue-trend-chart";
+Vue.use(TrendChart);
 
 Vue.config.productionTip = false
 new Vue({
