@@ -31,11 +31,11 @@ export default Vue.extend({
     const genome = {connections: [], biases: {} }
 
     _.each(this.genome.connections, connection => {
-      genome.connections.push({ id: connection.innovation, weight: Math.round(connection.weight * 100000000) / 100000000, delta: connection.delta })
+      genome.connections.push({ id: connection.innovation, weight: utils.toDecimaNum(connection.weight, 8), delta: utils.toDecimaNum(connection.delta, 8) })
     })
 
     _.each(this.genome.nodes, node => {
-      genome.biases[node.id] = Math.round(node.bias * 100000000) / 100000000;
+      genome.biases[node.id] = utils.toDecimaNum(node.bias, 8);
     })
 
 		this.json = format(beautify(genome, null as any, 2, 100));
