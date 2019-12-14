@@ -81,7 +81,8 @@ export default Vue.extend({
 					custom: {
 						id: node.getId(),
 						netInput: node.getNetInput(),
-						output: node.getOutput(),
+            output: node.getOutput(),
+            bias: node.getBias(),
 						connections
 					}
 				};

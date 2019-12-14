@@ -12,9 +12,6 @@ interface Function {
   name: string;
 }
 
-import Trend from "vuetrend";
-Vue.use(Trend)
-
 import TrendChart from "vue-trend-chart";
 Vue.use(TrendChart);
 

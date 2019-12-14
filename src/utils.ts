@@ -7,13 +7,13 @@ import { NODE_TYPE } from "../../rane/src/Node";
 import seedrandom from "seedrandom";
 
 
-const random = seedrandom('seeeeed');
 
-const randomWeight = () => {
-  return (random() * 2 - 1)
-}
 function createPerceptronGenome(...args: any) {
-  const activation = args.splice(0, 1)[0];
+  const random = seedrandom('seeeeed');
+  const randomWeight = () => {
+    return random() * 2 - 1
+  }
+    const activation = args.splice(0, 1)[0];
 	const input = args.splice(0, 1)[0];
 	const output = args.splice(args.length - 1, args.length)[0];
 	const hidden = args;
