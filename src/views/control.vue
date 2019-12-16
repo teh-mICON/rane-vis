@@ -198,7 +198,7 @@ export default Vue.extend({
       };
 			this.examples = utils.examples[index];
 			if (index == "mirror") {
-				this.genome = utils.createPerceptronGenome("relu", 3, 6, 6, 3);
+				this.genome = utils.createPerceptronGenome("relu", 3, 4, 5, 4, 3);
 				this.network = new Network(this.genome, config);
 			} else if (index == "X2") {
 				this.genome = utils.createPerceptronGenome("relu", 1, 6, 6, 6, 1);
@@ -237,7 +237,7 @@ export default Vue.extend({
 						: example.output,
 					actual: this.normalize
 						? _.map(actual, value => denormalize(2, 12, value))
-						: _.map(actual, output => utils.toDecimaNum(output, 20))
+						: _.map(actual, output => utils.toDecimaNum(output, 10))
 				});
 			});
 
@@ -246,7 +246,9 @@ export default Vue.extend({
 			this.graphNetwork = this.network;
 			this.genome = this.network.getGenome();
 			this.results = results;
-			this.errors.push(this.MSE);
+      this.errors.push(this.MSE);
+      if(this.errors.length > 100)
+        this.errors.splice(0, 1)
 			this.frame++;
 			this.epoch = epoch;
       this.elapsedTime = (new Date().getTime() - this.startTime.getTime()) / 1000;

@@ -20,6 +20,7 @@
     "typeface-montserrat": "0.0.75",
     "typeface-roboto": "0.0.75",
     "typeface-source-sans-pro": "0.0.75",
+    "v-tooltip": "^2.0.2",
     "vis-network": "^6.0.0",
     "vue": "^2.6.10",
     "vue-trend-chart": "^0.15.1"

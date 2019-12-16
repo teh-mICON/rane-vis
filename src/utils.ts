@@ -192,7 +192,7 @@ export default {
   },
   toDecimaNum(number, places = 5) {
     const value = number.toFixed(places).padEnd(places, '0')
-    return (number <= -0)
+    return (number < 0)
       ? "" + value
       : '+' + value
 
